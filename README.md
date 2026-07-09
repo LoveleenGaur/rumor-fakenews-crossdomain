@@ -1,71 +1,66 @@
-# Cross-Domain Generalization of Deep Learning Detectors for Rumors and Fake News in Online Social Networks
+# Cross-Corpus Generalization and Calibration of Deep Learning Fake-News Detectors
 
-A fully reproducible, **API-free** study of whether deep learning misinformation
-detectors that score near-perfectly in-domain actually transfer across corpora.
-Everything runs end to end on a single free Colab GPU with no social-media API keys
-and no manual downloads.
+A reproducible, **API-free**, **multi-seed** study of how far fake-news detectors generalize
+across corpora. Runs end to end on a free Colab T4 GPU with no social-media API keys.
+Code and data: https://github.com/LoveleenGaur/rumor-fakenews-crossdomain
 
 ## Key finding
 
-High in-domain accuracy is largely an illusion produced by corpus-specific artifacts,
-and it does **not** survive domain shift. Transformer pretraining narrows the gap but
-does not close it, and transfer is strongly asymmetric.
+In-domain near-saturation coexists with a **genre-structured** generalization gap. Transfer
+succeeds within the news genre and, with pretraining, from statements to news, but transfer
+**into** the short-statement corpus (LIAR) stays at chance for every model. Vocabulary overlap
+predicts which transfers succeed, and interpretability shows in-domain success on news leans on
+scraping/source artifacts (the token `com` is a top fake cue in *both* news corpora).
 
-| Model | McIntire in-domain (Acc / AUC) | LIAR→McIntire (AUC) | McIntire→LIAR (AUC) |
+## In-domain (RoBERTa, 3-seed mean)
+
+| Corpus | Accuracy | ROC-AUC |
+|---|---|---|
+| LIAR (statements) | 0.618 | 0.657 |
+| McIntire (news) | 0.989 | 0.999 |
+| ISOT (news) | 0.980 | 0.999 |
+
+## Cross-corpus transfer, ROC-AUC (RoBERTa)
+
+| Train \ Test | LIAR | McIntire | ISOT |
 |---|---|---|---|
-| LogReg (TF-IDF) | 0.945 / 0.984 | 0.543 | 0.498 |
-| BiLSTM | 0.875 / 0.939 | 0.515 | 0.526 |
-| DistilBERT | 0.962 / 0.994 | 0.595 | 0.515 |
-| RoBERTa | 0.980 / 0.999 | **0.723** | 0.564 |
+| **LIAR** | (in-domain) | 0.765 | 0.935 |
+| **McIntire** | 0.527 | (in-domain) | 0.943 |
+| **ISOT** | 0.514 | 0.792 | (in-domain) |
 
-A model that scores 0.945–0.980 in-domain drops toward chance out-of-domain. RoBERTa
-recovers substantial signal for statement→article transfer (AUC 0.723) but the
-article→statement direction stays near chance for **every** model. Interpretability shows
-the in-domain article score is carried by scraping/era artifacts (`advertisement`,
-`print`, `wikileaks`, `november 2016`), not veracity. Calibration error more than doubles
-under shift. See `results/results.json` for all numbers.
+Transfer into LIAR is at chance (AUC 0.51–0.53) for every model; news-to-news transfer is strong.
+Full metrics with per-cell standard deviations, calibration, interpretability, bootstrap CIs, and
+McNemar tests are in `results/results.json`.
 
-## Datasets (public, redistributed in full)
+## Datasets (public, no API)
 
-- **LIAR** — 12.8k short PolitiFact statements (Wang, 2017).
-- **McIntire fake_or_real_news** — ~6.3k full news articles.
+- **LIAR** (Wang, 2017) — short PolitiFact statements.
+- **McIntire** — full news articles.
+- **ISOT** (Ahmed, Traore & Saad, 2017) — Reuters vs flagged-site articles (via the GonzaloA mirror).
 
-Both are downloaded automatically at run time from public GitHub mirrors; no API is used.
+Cross-corpus de-duplication removes any article shared between corpora; each training set is capped
+at 5,000 for a controlled comparison.
 
 ## How to run
 
-1. Open `Rumor_FakeNews_CrossDomain.ipynb` in Google Colab.
-2. Runtime → Change runtime type → **T4 GPU**.
-3. **Run all** (~15–25 minutes).
-4. Results are written to `results/results.json` and figures under `results/figs/`.
-
-Locally: `pip install -r requirements.txt` then run the notebook with Jupyter.
+Open `Rumor_FakeNews_CrossDomain.ipynb` in Colab, set a T4 GPU, Run all (~60–90 min for 3 seeds;
+set `SEEDS` to 5 entries for a 5-seed run). Results are written to `results/results.json`.
 
 ## Repository structure
 
 ```
-Rumor_FakeNews_CrossDomain.ipynb   reproducible pipeline (data → models → audit)
-results/results.json               serialized metrics used in the paper
-figures/                           generalization, asymmetry, calibration figures
+Rumor_FakeNews_CrossDomain.ipynb   reproducible 3-corpus, multi-seed pipeline
+results/results.json               full serialized metrics
+figures/                           transfer matrix, calibration, and Supplementary S1
 paper/IET_Manuscript.docx          manuscript
-requirements.txt                   pinned dependencies
-LICENSE                            MIT
+requirements.txt / LICENSE
 ```
-
-## Method
-
-A controlled ladder of models — TF-IDF linear classifiers (LogReg, Linear SVM, MultinomialNB),
-a BiLSTM, and fine-tuned DistilBERT and RoBERTa — evaluated under a strict in-domain vs
-cross-domain protocol, with bootstrap confidence intervals, McNemar tests, expected
-calibration error with reliability diagrams, and SHAP / linear-coefficient interpretability.
-Seed fixed at 42.
 
 ## Citation
 
-Gaur, L. (2026). Cross-Domain Generalization of Deep Learning Detectors for Rumors and
-Fake News in Online Social Networks: An Auditable and Reproducible Study.
-Code and data: https://github.com/LoveleenGaur/rumor-fakenews-crossdomain
+Raman, R. & Gaur, L. Cross-Corpus Generalization and Calibration of Deep Learning Fake-News
+Detectors: A Reproducible, Multi-Seed Audit (2026).
 
 ## License
 
-Code released under the MIT License. The datasets remain under their original terms.
+Code under the MIT License; datasets retain their original terms.
