@@ -1,48 +1,532 @@
 {
-  "seed": 42,
-  "environment": {"python": "3.12.13", "torch": "2.11.0+cu128", "transformers": "5.12.1", "sklearn": "1.6.1", "device": "cuda"},
-  "dataset_profile": {
-    "LIAR": {"train_n": 10240, "valid_n": 1284, "test_n": 1267, "train_fake_rate": 0.4383, "mean_chars_train": 106, "median_chars_train": 99},
-    "McIntire": {"train_n": 5068, "valid_n": 633, "test_n": 634, "train_fake_rate": 0.5034, "mean_chars_train": 4775, "median_chars_train": 3682}
+  "config": {
+    "seeds": [
+      42,
+      7,
+      123
+    ],
+    "data_seed": 42,
+    "train_cap": 5000,
+    "test_cap": 1500,
+    "transformers": [
+      "distilbert-base-uncased",
+      "roberta-base"
+    ],
+    "epochs": 3
   },
-  "in_domain": {
+  "dataset_profile": {
     "LIAR": {
-      "LogReg": {"accuracy": 0.6038, "f1_macro": 0.5978, "roc_auc": 0.6421},
-      "LinSVM": {"accuracy": 0.601, "f1_macro": 0.595, "roc_auc": 0.635},
-      "MultiNB": {"accuracy": 0.609, "f1_macro": 0.564, "roc_auc": 0.652},
-      "BiLSTM": {"accuracy": 0.6125, "f1_macro": 0.5724, "roc_auc": 0.6446},
-      "DistilBERT": {"accuracy": 0.6504, "f1_macro": 0.6337, "roc_auc": 0.6761},
-      "RoBERTa": {"accuracy": 0.646, "f1_macro": 0.626, "roc_auc": 0.697}
+      "train_n": 5000,
+      "valid_n": 1276,
+      "test_n": 1277,
+      "train_fake_rate": 0.442,
+      "mean_chars_train": 106,
+      "median_chars_train": 98
     },
     "McIntire": {
-      "LogReg": {"accuracy": 0.9448, "f1_macro": 0.9448, "roc_auc": 0.9835},
-      "LinSVM": {"accuracy": 0.951, "f1_macro": 0.951, "roc_auc": 0.988},
-      "MultiNB": {"accuracy": 0.907, "f1_macro": 0.907, "roc_auc": 0.967},
-      "BiLSTM": {"accuracy": 0.8754, "f1_macro": 0.8752, "roc_auc": 0.9392},
-      "DistilBERT": {"accuracy": 0.9621, "f1_macro": 0.9621, "roc_auc": 0.994},
-      "RoBERTa": {"accuracy": 0.980, "f1_macro": 0.980, "roc_auc": 0.999}
+      "train_n": 5000,
+      "valid_n": 630,
+      "test_n": 631,
+      "train_fake_rate": 0.4998,
+      "mean_chars_train": 4701,
+      "median_chars_train": 3656
+    },
+    "ISOT": {
+      "train_n": 5000,
+      "valid_n": 4058,
+      "test_n": 1500,
+      "train_fake_rate": 0.4598,
+      "mean_chars_train": 2552,
+      "median_chars_train": 2295
     }
   },
-  "cross_domain": {
-    "LogReg":     {"LIAR->McIntire": {"accuracy": 0.5315, "f1_macro": 0.5315, "roc_auc": 0.5432}, "McIntire->LIAR": {"accuracy": 0.4546, "f1_macro": 0.4149, "roc_auc": 0.4975}},
-    "BiLSTM":     {"LIAR->McIntire": {"accuracy": 0.5079, "f1_macro": 0.4819, "roc_auc": 0.5153}, "McIntire->LIAR": {"accuracy": 0.5383, "f1_macro": 0.4872, "roc_auc": 0.5257}},
-    "DistilBERT": {"LIAR->McIntire": {"accuracy": 0.5931, "f1_macro": 0.5909, "roc_auc": 0.5953}, "McIntire->LIAR": {"accuracy": 0.5564, "f1_macro": 0.4959, "roc_auc": 0.5148}},
-    "RoBERTa":    {"LIAR->McIntire": {"accuracy": 0.6435, "f1_macro": 0.6279, "roc_auc": 0.7229}, "McIntire->LIAR": {"accuracy": 0.5564, "f1_macro": 0.4243, "roc_auc": 0.5635}}
+  "classical_in_domain": {
+    "LIAR": {
+      "LogReg": {
+        "accuracy": 0.5967,
+        "f1_macro": 0.5938,
+        "f1_fake": 0.5595,
+        "roc_auc": 0.6278
+      },
+      "LinSVM": {
+        "accuracy": 0.5889,
+        "f1_macro": 0.5852,
+        "f1_fake": 0.5462,
+        "roc_auc": 0.617
+      },
+      "MultiNB": {
+        "accuracy": 0.6061,
+        "f1_macro": 0.5683,
+        "f1_fake": 0.4405,
+        "roc_auc": 0.6375
+      }
+    },
+    "McIntire": {
+      "LogReg": {
+        "accuracy": 0.9429,
+        "f1_macro": 0.9429,
+        "f1_fake": 0.9446,
+        "roc_auc": 0.9932
+      },
+      "LinSVM": {
+        "accuracy": 0.9493,
+        "f1_macro": 0.9493,
+        "f1_fake": 0.9502,
+        "roc_auc": 0.9949
+      },
+      "MultiNB": {
+        "accuracy": 0.9223,
+        "f1_macro": 0.9223,
+        "f1_fake": 0.9195,
+        "roc_auc": 0.9805
+      }
+    },
+    "ISOT": {
+      "LogReg": {
+        "accuracy": 0.97,
+        "f1_macro": 0.9698,
+        "f1_fake": 0.9676,
+        "roc_auc": 0.9928
+      },
+      "LinSVM": {
+        "accuracy": 0.974,
+        "f1_macro": 0.9739,
+        "f1_fake": 0.972,
+        "roc_auc": 0.9944
+      },
+      "MultiNB": {
+        "accuracy": 0.9333,
+        "f1_macro": 0.9328,
+        "f1_fake": 0.9266,
+        "roc_auc": 0.9799
+      }
+    }
   },
-  "generalization_gap_macro_f1": {
-    "LIAR->McIntire": {"LogReg": 0.4133, "BiLSTM": 0.3933, "DistilBERT": 0.3712, "RoBERTa": 0.3521},
-    "McIntire->LIAR": {"LogReg": 0.1829, "BiLSTM": 0.0852, "DistilBERT": 0.1378, "RoBERTa": 0.2017}
+  "classical_cross_domain": {
+    "LIAR->McIntire": {
+      "accuracy": 0.5008,
+      "f1_macro": 0.4913,
+      "f1_fake": 0.5607,
+      "roc_auc": 0.5003
+    },
+    "LIAR->ISOT": {
+      "accuracy": 0.6093,
+      "f1_macro": 0.6091,
+      "f1_fake": 0.6185,
+      "roc_auc": 0.6659
+    },
+    "McIntire->LIAR": {
+      "accuracy": 0.4518,
+      "f1_macro": 0.4113,
+      "f1_fake": 0.5658,
+      "roc_auc": 0.5015
+    },
+    "McIntire->ISOT": {
+      "accuracy": 0.6713,
+      "f1_macro": 0.6713,
+      "f1_fake": 0.6716,
+      "roc_auc": 0.7612
+    },
+    "ISOT->LIAR": {
+      "accuracy": 0.4847,
+      "f1_macro": 0.4768,
+      "f1_fake": 0.5411,
+      "roc_auc": 0.5266
+    },
+    "ISOT->McIntire": {
+      "accuracy": 0.5531,
+      "f1_macro": 0.5168,
+      "f1_fake": 0.6493,
+      "roc_auc": 0.6253
+    }
+  },
+  "bilstm_in_domain": {
+    "LIAR": {
+      "accuracy_mean": 0.5698,
+      "accuracy_std": 0.0053,
+      "f1_macro_mean": 0.5633,
+      "f1_macro_std": 0.005,
+      "f1_fake_mean": 0.5132,
+      "f1_fake_std": 0.0205,
+      "roc_auc_mean": 0.611,
+      "roc_auc_std": 0.0093
+    },
+    "McIntire": {
+      "accuracy_mean": 0.879,
+      "accuracy_std": 0.0067,
+      "f1_macro_mean": 0.8788,
+      "f1_macro_std": 0.007,
+      "f1_fake_mean": 0.8809,
+      "f1_fake_std": 0.0026,
+      "roc_auc_mean": 0.9545,
+      "roc_auc_std": 0.0057
+    },
+    "ISOT": {
+      "accuracy_mean": 0.9438,
+      "accuracy_std": 0.0052,
+      "f1_macro_mean": 0.9435,
+      "f1_macro_std": 0.0054,
+      "f1_fake_mean": 0.9402,
+      "f1_fake_std": 0.0068,
+      "roc_auc_mean": 0.9834,
+      "roc_auc_std": 0.0027
+    }
+  },
+  "bilstm_cross_domain": {
+    "LIAR->McIntire": {
+      "accuracy_mean": 0.5658,
+      "accuracy_std": 0.0192,
+      "f1_macro_mean": 0.5567,
+      "f1_macro_std": 0.0156,
+      "f1_fake_mean": 0.5929,
+      "f1_fake_std": 0.0551,
+      "roc_auc_mean": 0.5845,
+      "roc_auc_std": 0.0316
+    },
+    "LIAR->ISOT": {
+      "accuracy_mean": 0.5244,
+      "accuracy_std": 0.0413,
+      "f1_macro_mean": 0.5117,
+      "f1_macro_std": 0.0556,
+      "f1_fake_mean": 0.5391,
+      "f1_fake_std": 0.031,
+      "roc_auc_mean": 0.5406,
+      "roc_auc_std": 0.0495
+    },
+    "McIntire->LIAR": {
+      "accuracy_mean": 0.5192,
+      "accuracy_std": 0.004,
+      "f1_macro_mean": 0.5133,
+      "f1_macro_std": 0.0043,
+      "f1_fake_mean": 0.4698,
+      "f1_fake_std": 0.0347,
+      "roc_auc_mean": 0.5227,
+      "roc_auc_std": 0.0114
+    },
+    "McIntire->ISOT": {
+      "accuracy_mean": 0.6453,
+      "accuracy_std": 0.0284,
+      "f1_macro_mean": 0.6411,
+      "f1_macro_std": 0.0312,
+      "f1_fake_mean": 0.6426,
+      "f1_fake_std": 0.0155,
+      "roc_auc_mean": 0.6948,
+      "roc_auc_std": 0.0157
+    },
+    "ISOT->LIAR": {
+      "accuracy_mean": 0.4643,
+      "accuracy_std": 0.0205,
+      "f1_macro_mean": 0.415,
+      "f1_macro_std": 0.0585,
+      "f1_fake_mean": 0.5642,
+      "f1_fake_std": 0.0358,
+      "roc_auc_mean": 0.5047,
+      "roc_auc_std": 0.0087
+    },
+    "ISOT->McIntire": {
+      "accuracy_mean": 0.5562,
+      "accuracy_std": 0.046,
+      "f1_macro_mean": 0.4952,
+      "f1_macro_std": 0.0791,
+      "f1_fake_mean": 0.6653,
+      "f1_fake_std": 0.0131,
+      "roc_auc_mean": 0.6391,
+      "roc_auc_std": 0.0322
+    }
+  },
+  "transformer_in_domain": {
+    "distilbert-base-uncased": {
+      "LIAR": {
+        "accuracy_mean": 0.626,
+        "accuracy_std": 0.0039,
+        "f1_macro_mean": 0.6146,
+        "f1_macro_std": 0.0026,
+        "f1_fake_mean": 0.5494,
+        "f1_fake_std": 0.0116,
+        "roc_auc_mean": 0.6574,
+        "roc_auc_std": 0.0015
+      },
+      "McIntire": {
+        "accuracy_mean": 0.9805,
+        "accuracy_std": 0.002,
+        "f1_macro_mean": 0.9805,
+        "f1_macro_std": 0.002,
+        "f1_fake_mean": 0.9803,
+        "f1_fake_std": 0.0019,
+        "roc_auc_mean": 0.9975,
+        "roc_auc_std": 0.0005
+      },
+      "ISOT": {
+        "accuracy_mean": 0.976,
+        "accuracy_std": 0.0014,
+        "f1_macro_mean": 0.9759,
+        "f1_macro_std": 0.0014,
+        "f1_fake_mean": 0.9741,
+        "f1_fake_std": 0.0016,
+        "roc_auc_mean": 0.9983,
+        "roc_auc_std": 0.0001
+      }
+    },
+    "roberta-base": {
+      "LIAR": {
+        "accuracy_mean": 0.6181,
+        "accuracy_std": 0.0096,
+        "f1_macro_mean": 0.6083,
+        "f1_macro_std": 0.0065,
+        "f1_fake_mean": 0.5471,
+        "f1_fake_std": 0.0035,
+        "roc_auc_mean": 0.6569,
+        "roc_auc_std": 0.0063
+      },
+      "McIntire": {
+        "accuracy_mean": 0.9894,
+        "accuracy_std": 0.0008,
+        "f1_macro_mean": 0.9894,
+        "f1_macro_std": 0.0008,
+        "f1_fake_mean": 0.9893,
+        "f1_fake_std": 0.0008,
+        "roc_auc_mean": 0.9994,
+        "roc_auc_std": 0.0001
+      },
+      "ISOT": {
+        "accuracy_mean": 0.9796,
+        "accuracy_std": 0.0008,
+        "f1_macro_mean": 0.9795,
+        "f1_macro_std": 0.0008,
+        "f1_fake_mean": 0.978,
+        "f1_fake_std": 0.0009,
+        "roc_auc_mean": 0.9989,
+        "roc_auc_std": 0.0001
+      }
+    }
+  },
+  "transformer_cross_domain": {
+    "distilbert-base-uncased": {
+      "LIAR->McIntire": {
+        "accuracy_mean": 0.5378,
+        "accuracy_std": 0.016,
+        "f1_macro_mean": 0.533,
+        "f1_macro_std": 0.0187,
+        "f1_fake_mean": 0.5639,
+        "f1_fake_std": 0.0297,
+        "roc_auc_mean": 0.5382,
+        "roc_auc_std": 0.0182
+      },
+      "LIAR->ISOT": {
+        "accuracy_mean": 0.5118,
+        "accuracy_std": 0.0023,
+        "f1_macro_mean": 0.5024,
+        "f1_macro_std": 0.0076,
+        "f1_fake_mean": 0.5629,
+        "f1_fake_std": 0.0257,
+        "roc_auc_mean": 0.5537,
+        "roc_auc_std": 0.0251
+      },
+      "McIntire->LIAR": {
+        "accuracy_mean": 0.5583,
+        "accuracy_std": 0.0036,
+        "f1_macro_mean": 0.5131,
+        "f1_macro_std": 0.0033,
+        "f1_fake_mean": 0.365,
+        "f1_fake_std": 0.0134,
+        "roc_auc_mean": 0.518,
+        "roc_auc_std": 0.003
+      },
+      "McIntire->ISOT": {
+        "accuracy_mean": 0.7253,
+        "accuracy_std": 0.0105,
+        "f1_macro_mean": 0.7196,
+        "f1_macro_std": 0.0085,
+        "f1_fake_mean": 0.6808,
+        "f1_fake_std": 0.0083,
+        "roc_auc_mean": 0.7543,
+        "roc_auc_std": 0.0141
+      },
+      "ISOT->LIAR": {
+        "accuracy_mean": 0.4831,
+        "accuracy_std": 0.0135,
+        "f1_macro_mean": 0.4777,
+        "f1_macro_std": 0.0194,
+        "f1_fake_mean": 0.5223,
+        "f1_fake_std": 0.0124,
+        "roc_auc_mean": 0.4901,
+        "roc_auc_std": 0.0008
+      },
+      "ISOT->McIntire": {
+        "accuracy_mean": 0.5341,
+        "accuracy_std": 0.0161,
+        "f1_macro_mean": 0.4262,
+        "f1_macro_std": 0.0385,
+        "f1_fake_mean": 0.6744,
+        "f1_fake_std": 0.005,
+        "roc_auc_mean": 0.6581,
+        "roc_auc_std": 0.04
+      }
+    },
+    "roberta-base": {
+      "LIAR->McIntire": {
+        "accuracy_mean": 0.6667,
+        "accuracy_std": 0.0538,
+        "f1_macro_mean": 0.6462,
+        "f1_macro_std": 0.0678,
+        "f1_fake_mean": 0.7266,
+        "f1_fake_std": 0.0275,
+        "roc_auc_mean": 0.7652,
+        "roc_auc_std": 0.0296
+      },
+      "LIAR->ISOT": {
+        "accuracy_mean": 0.7949,
+        "accuracy_std": 0.1037,
+        "f1_macro_mean": 0.7868,
+        "f1_macro_std": 0.1146,
+        "f1_fake_mean": 0.8202,
+        "f1_fake_std": 0.0717,
+        "roc_auc_mean": 0.9355,
+        "roc_auc_std": 0.0175
+      },
+      "McIntire->LIAR": {
+        "accuracy_mean": 0.5717,
+        "accuracy_std": 0.0013,
+        "f1_macro_mean": 0.4443,
+        "f1_macro_std": 0.0184,
+        "f1_fake_mean": 0.1787,
+        "f1_fake_std": 0.0414,
+        "roc_auc_mean": 0.5267,
+        "roc_auc_std": 0.0144
+      },
+      "McIntire->ISOT": {
+        "accuracy_mean": 0.9204,
+        "accuracy_std": 0.0096,
+        "f1_macro_mean": 0.9194,
+        "f1_macro_std": 0.0099,
+        "f1_fake_mean": 0.9103,
+        "f1_fake_std": 0.0118,
+        "roc_auc_mean": 0.9429,
+        "roc_auc_std": 0.004
+      },
+      "ISOT->LIAR": {
+        "accuracy_mean": 0.4623,
+        "accuracy_std": 0.027,
+        "f1_macro_mean": 0.3976,
+        "f1_macro_std": 0.0763,
+        "f1_fake_mean": 0.5673,
+        "f1_fake_std": 0.0423,
+        "roc_auc_mean": 0.5142,
+        "roc_auc_std": 0.0037
+      },
+      "ISOT->McIntire": {
+        "accuracy_mean": 0.6144,
+        "accuracy_std": 0.0547,
+        "f1_macro_mean": 0.5569,
+        "f1_macro_std": 0.0827,
+        "f1_fake_mean": 0.7147,
+        "f1_fake_std": 0.029,
+        "roc_auc_mean": 0.7924,
+        "roc_auc_std": 0.0585
+      }
+    }
   },
   "calibration_ece": {
-    "LogReg LIAR in-domain": 0.0767, "LogReg McIntire in-domain": 0.0822,
-    "LogReg LIAR->McIntire": 0.1463, "LogReg McIntire->LIAR": 0.2378,
-    "DistilBERT LIAR in-domain": 0.1173, "DistilBERT McIntire in-domain": 0.0302
+    "LogReg LIAR in-domain": 0.0818,
+    "LogReg McIntire in-domain": 0.0908,
+    "LogReg ISOT in-domain": 0.0634,
+    "LogReg LIAR->McIntire": 0.1729,
+    "LogReg LIAR->ISOT": 0.0534,
+    "LogReg McIntire->LIAR": 0.2409,
+    "LogReg McIntire->ISOT": 0.049,
+    "LogReg ISOT->LIAR": 0.1463,
+    "LogReg ISOT->McIntire": 0.2182,
+    "distilbert-base-uncased LIAR in-domain": 0.1226,
+    "distilbert-base-uncased McIntire in-domain": 0.0164,
+    "distilbert-base-uncased ISOT in-domain": 0.0183
   },
   "top_features": {
-    "McIntire": {"fake_indicative": ["advertisement","print","russia","email","wikileaks","com","source","november 2016","share","election","article","november","hillary","october","2016"]},
-    "LIAR": {"fake_indicative": ["scheme","fight","aid","christians","texas public","selling","increase history","cabinet","deciding","face","wisconsin","seven years","debunked","nuclear weapons","illegals"]}
+    "LIAR": {
+      "fake_indicative": [
+        "obamacare",
+        "elections",
+        "rising",
+        "white",
+        "obama",
+        "500 billion",
+        "tax dollars",
+        "sandy",
+        "released",
+        "prayer",
+        "received",
+        "areas",
+        "easier",
+        "offered",
+        "congressman"
+      ]
+    },
+    "McIntire": {
+      "fake_indicative": [
+        "2016",
+        "october",
+        "article",
+        "hillary",
+        "election",
+        "share",
+        "november",
+        "november 2016",
+        "wikileaks",
+        "source",
+        "email",
+        "russia",
+        "com",
+        "print",
+        "oct"
+      ]
+    },
+    "ISOT": {
+      "fake_indicative": [
+        "video",
+        "image",
+        "featured image",
+        "featured",
+        "just",
+        "gop",
+        "read",
+        "com",
+        "watch",
+        "getty",
+        "images",
+        "getty images",
+        "america",
+        "obama",
+        "didn"
+      ]
+    }
   },
-  "vocab_jaccard_top2000": {"LIAR|McIntire": 0.1855},
-  "bootstrap_ci_f1_fake": {"LIAR": [0.511, 0.5828], "McIntire": [0.9249, 0.9602]},
-  "mcnemar_logreg_vs_linsvm": {"LIAR": {"statistic": 0.0412, "pvalue": 0.839081}, "McIntire": {"statistic": 1.125, "pvalue": 0.288844}}
+  "vocab_jaccard_top2000": {
+    "LIAR|McIntire": 0.1264,
+    "LIAR|ISOT": 0.128,
+    "McIntire|ISOT": 0.3826
+  },
+  "bootstrap_ci_f1fake": {
+    "LIAR": [
+      0.5231,
+      0.5921
+    ],
+    "McIntire": [
+      0.9259,
+      0.9626
+    ],
+    "ISOT": [
+      0.9582,
+      0.9762
+    ]
+  },
+  "mcnemar_logreg_vs_linsvm": {
+    "LIAR": {
+      "pvalue": 0.314305
+    },
+    "McIntire": {
+      "pvalue": 0.386476
+    },
+    "ISOT": {
+      "pvalue": 0.0771
+    }
+  }
 }
